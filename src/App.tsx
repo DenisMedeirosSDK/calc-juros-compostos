@@ -2,7 +2,6 @@ import { FormEvent, useState } from "react";
 import { formattedCurrency } from "./utils/format-currency";
 
 import * as z from "zod";
-import { Form } from "./components/Forms";
 
 interface ResponseTable {
   month: number;
@@ -11,14 +10,6 @@ interface ResponseTable {
   totalInterest: number;
   totalAccumulated: number;
 }
-
-const schema2 = z.object({
-  month: z.number().min(1),
-  fees: z.number().max(1).min(0),
-  totalInvested: z.number().min(0),
-  totalInterest: z.number().min(0),
-  totalAccumulated: z.number(),
-});
 
 const schema = z.object({
   initialMoney: z.number().min(0),
@@ -90,7 +81,7 @@ export function App() {
   return (
     <div className="bg-zinc-900 text-zinc-100 flex flex-col w-full h-full min-h-screen items-center pb-10">
       <main className="flex flex-col justify-center items-center w-full px-5 mx-auto gap-10">
-        {/* <form
+        <form
           action=""
           className="grid md:grid-cols-2 gap-4 w-full max-w-5xl mt-10"
         >
@@ -157,29 +148,14 @@ export function App() {
             />
           </div>
 
-          {/* <label
-            htmlFor="checkbox"
-            className="flex gap-3 items-center p-3 h-12 bg-zinc-800 rounded-lg"
-          >
-            <input
-              type="checkbox"
-              id="checkbox"
-              name="checkbox"
-              className="w-5 h-5"
-            />
-            <p className="font-semibold">Investir juros</p>
-          </label> */}
-
-        {/* <button
+          <button
             type="submit"
             onClick={handleCalculate}
             className="bg-green-300 hover:bg-green-500 transition-colors rounded-lg h-12 text-zinc-900 font-semibold"
           >
             Calcular
           </button>
-        </form>  */}
-
-        <Form />
+        </form>
         <section className="w-full max-w-5xl">
           {isCalculate ? (
             <div className="grid md:grid-cols-3 md:justify-between items-center gap-5">
@@ -212,7 +188,6 @@ export function App() {
               </div>
             </div>
           ) : (
-            // <></>
             <div className="">
               <script
                 async

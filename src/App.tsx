@@ -194,7 +194,6 @@ export function App() {
                 client="ca-pub-5699676851939916"
                 slot="2117955977"
                 format="auto"
-                adTest="on"
               />
             </div>
           )}

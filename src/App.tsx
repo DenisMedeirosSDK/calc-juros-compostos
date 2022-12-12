@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { formattedCurrency } from "./utils/format-currency";
 
 import * as z from "zod";
+import { Adsense } from "./components/Adsense";
 
 interface ResponseTable {
   month: number;
@@ -188,26 +189,13 @@ export function App() {
               </div>
             </div>
           ) : (
-            <div className="">
-              <script
-                async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5699676851939916"
-                crossOrigin="anonymous"
-              ></script>
-              {/* <!-- AdY --> */}
-              <ins
-                className="adsbygoogle block"
-                // style="display:block"
-                data-ad-client="ca-pub-5699676851939916"
-                data-ad-slot="2117955977"
-                data-ad-format="auto"
-                // data-adbreak-test="on"
-                data-adtest="on"
-                data-full-width-responsive="true"
-              ></ins>
-              <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-              </script>
+            <div className="max-w-[728px] max-h-[90px]">
+              <Adsense
+                client="ca-pub-5699676851939916"
+                slot="2117955977"
+                format="auto"
+                adTest="on"
+              />
             </div>
           )}
         </section>

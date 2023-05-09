@@ -1,8 +1,9 @@
-import { FormEvent, useState } from "react";
-import { formattedCurrency } from "./utils/format-currency";
-
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as Slider from '@radix-ui/react-slider';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Adsense } from "./components/Adsense";
+import { formattedCurrency } from "./utils/format-currency";
 
 interface ResponseTable {
   month: number;
@@ -12,18 +13,17 @@ interface ResponseTable {
   totalAccumulated: number;
 }
 
-const schema = z.object({
-  initialMoney: z.number().min(0),
-  monthMoney: z.number().min(0),
-  interestPercentage: z.number().max(1).min(0),
-  period: z.number().min(1),
+const formSchema = z.object({
+  initialMoney: z.coerce.number().min(0),
+  monthMoney: z.coerce.number().min(0),
+  period: z.coerce.number().min(1),
 });
 
+type FormSchema = z.infer<typeof formSchema>;
+
 export function App() {
-  const [initialMoney, setInitialMoney] = useState("");
-  const [monthMoney, setMonthMoney] = useState("");
-  const [interestPercentage, setiInterestPercentage] = useState("");
-  const [period, setPeriod] = useState("");
+
+  const [interestPercentage, setInterestPercentage] = useState(0.9);
 
   const [finalTotalAmount, setFinalTotalAmount] = useState(0);
   const [finalTotalInvested, setFinalTotalInvested] = useState(0);
@@ -32,13 +32,15 @@ export function App() {
 
   const [result, setResult] = useState<ResponseTable[]>([]);
 
-  function handleCalculate(event: FormEvent) {
-    event.preventDefault();
+  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema)
+  })
 
-    const convInitialMoney = Number(initialMoney);
-    const convMonthMoney = Number(monthMoney);
-    const convInterestPercentage = Number(interestPercentage) / 100;
-    const convPeriod = Number(period);
+  function handleCalculate(data: FormSchema) {
+    const convInitialMoney = data.initialMoney;
+    const convMonthMoney = data.monthMoney;
+    const convInterestPercentage = interestPercentage / 100;
+    const convPeriod = data.period;
 
     let totalInvested = convInitialMoney;
     let totalInterest = 0;
@@ -49,7 +51,7 @@ export function App() {
       convInitialMoney * Math.pow(1 + convInterestPercentage, convPeriod) +
       (convMonthMoney *
         (Math.pow(1 + convInterestPercentage, convPeriod) - 1)) /
-        convInterestPercentage;
+      convInterestPercentage;
 
     const sumTotalInvested = convInitialMoney + convMonthMoney * convPeriod;
 
@@ -79,12 +81,17 @@ export function App() {
     setIsCalculate(true);
   }
 
+
+  function handleValueChange(newValue: number) {
+    setInterestPercentage(newValue)
+  }
+
   return (
-    <div className="bg-zinc-900 text-zinc-100 flex flex-col w-full h-full min-h-screen items-center pb-10">
+    <div className="bg-zinc-900 text-zinc-100 flex flex-col w-full min-h-screen h-full items-center pb-10">
       <main className="flex flex-col justify-center items-center w-full px-5 mx-auto gap-10">
         <form
-          action=""
           className="grid md:grid-cols-2 gap-4 w-full max-w-5xl mt-10"
+          onSubmit={handleSubmit(handleCalculate)}
         >
           <div className="flex flex-col">
             <label htmlFor="" className="font-semibold mb-2">
@@ -96,10 +103,16 @@ export function App() {
               placeholder="R$1.000,00"
               className="p-3 bg-zinc-800 rounded-lg border-collapse
             outline-none focus:ring-2 ring-green-300"
-              value={initialMoney}
-              onChange={(event: FormEvent<HTMLInputElement>) =>
-                setInitialMoney(event.currentTarget.value)
-              }
+              // value={initialMoney}
+              // onChange={(event: FormEvent<HTMLInputElement>) =>
+              //   setInitialMoney(event.currentTarget.value)
+              // }
+              {...register("initialMoney")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit(handleCalculate)();
+                }
+              }}
             />
           </div>
           <div className="flex flex-col">
@@ -112,91 +125,114 @@ export function App() {
               placeholder="R$100,00"
               className="p-3 bg-zinc-800 rounded-lg border-collapse
             outline-none focus:ring-2 ring-green-300"
-              value={monthMoney}
-              onChange={(event: FormEvent<HTMLInputElement>) =>
-                setMonthMoney(event.currentTarget.value)
-              }
+              // value={monthMoney}
+              // onChange={(event: FormEvent<HTMLInputElement>) =>
+              //   setMonthMoney(event.currentTarget.value)
+              // }
+
+              {...register("monthMoney")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit(handleCalculate)();
+                }
+              }}
             />
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="" className="font-semibold mb-2">
-              Taxa de juros <i>(a.m)</i>
+          <div className="flex flex-col justify-between">
+            <label htmlFor="" className="font-semibold mb-2 flex flex-row justify-between">
+              <p>
+                Taxa de juros <i>(a.m)</i>
+              </p>
+              <span className="">{interestPercentage}%</span>
             </label>
+
+            <Slider.Root defaultValue={[0.9]} min={0.1} max={2} step={0.01} aria-label="Volume"
+              className="relative flex h-5 w-full touch-none items-center"
+
+              onValueChange={(value) => handleValueChange(value[0])}
+            >
+              <Slider.Track className="relative h-1 w-full grow rounded-full bg-white dark:bg-gray-800">
+                <Slider.Range className="absolute h-full rounded-full bg-purple-600 dark:bg-white" />
+              </Slider.Track>
+              <Slider.Thumb
+                className="block h-5 w-5 rounded-full bg-purple-600 dark:bg-white focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+              />
+            </Slider.Root>
+
+            {/* 
             <input
               type="text"
               placeholder="10%"
               className="p-3 bg-zinc-800 rounded-lg border-collapse
             outline-none focus:ring-2 ring-green-300"
               value={interestPercentage}
-              onChange={(event: FormEvent<HTMLInputElement>) =>
-                setiInterestPercentage(event.currentTarget.value)
-              }
-            />
+            // onChange={(event: FormEvent<HTMLInputElement>) =>
+            //   setInterestPercentage(event.currentTarget.value)
+            // }
+            /> */}
           </div>
           <div className="flex flex-col">
             <label htmlFor="" className="font-semibold mb-2">
-              Periodo <i>(meses)</i>
+              Período <i>(meses)</i>
             </label>
             <input
               type="text"
               placeholder="10"
               className="p-3 bg-zinc-800 rounded-lg border-collapse
             outline-none focus:ring-2 ring-green-300"
-              value={period}
-              onChange={(event: FormEvent<HTMLInputElement>) =>
-                setPeriod(event.currentTarget.value)
-              }
+              // value={period}
+              // onChange={(event: FormEvent<HTMLInputElement>) =>
+              //   setPeriod(event.currentTarget.value)
+              // }
+              {...register("period")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit(handleCalculate)();
+                }
+              }}
             />
           </div>
 
           <button
             type="submit"
-            onClick={handleCalculate}
-            className="bg-green-300 hover:bg-green-500 transition-colors rounded-lg h-12 text-zinc-900 font-semibold"
+            disabled={isSubmitting}
+            className="bg-green-300 hover:bg-green-500 transition-colors rounded-lg h-12 text-zinc-900 font-semibold disabled:bg-zinc-500"
           >
             Calcular
           </button>
         </form>
         <section className="w-full max-w-5xl">
-          {isCalculate ? (
-            <div className="grid md:grid-cols-3 md:justify-between items-center gap-5">
-              <div
-                className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
+
+          <div className="grid md:grid-cols-3 md:justify-between items-center gap-5">
+            <div
+              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
              drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-              >
-                <p className="capitalize font-medium">Valor total final</p>
-                <span className="text-green-300 font-semibold">
-                  {formattedCurrency(finalTotalAmount)}
-                </span>
-              </div>
-              <div
-                className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
-             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-              >
-                <p className="capitalize font-medium">Valor total investido</p>
-                <span className="text-green-300 font-semibold">
-                  {formattedCurrency(finalTotalInvested)}
-                </span>
-              </div>
-              <div
-                className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
-             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-              >
-                <p className="capitalize font-medium">Total em juros</p>
-                <span className="text-green-300 font-semibold">
-                  {formattedCurrency(totalInterest)}
-                </span>
-              </div>
+            >
+              <p className="capitalize font-medium">Valor total final</p>
+              <span className="text-green-300 font-semibold">
+                {formattedCurrency(finalTotalAmount)}
+              </span>
             </div>
-          ) : (
-            <div className="max-w-[728px] max-h-[90px]">
-              <Adsense
-                client="ca-pub-5699676851939916"
-                slot="2117955977"
-                format="auto"
-              />
+            <div
+              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
+             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
+            >
+              <p className="capitalize font-medium">Valor total investido</p>
+              <span className="text-green-300 font-semibold">
+                {formattedCurrency(finalTotalInvested)}
+              </span>
             </div>
-          )}
+            <div
+              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
+             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
+            >
+              <p className="capitalize font-medium">Total em juros</p>
+              <span className="text-green-300 font-semibold">
+                {formattedCurrency(totalInterest)}
+              </span>
+            </div>
+          </div>
+
         </section>
         <section className="w-full overflow-auto max-h-[620px] max-w-5xl">
           <table className="min-w-full">

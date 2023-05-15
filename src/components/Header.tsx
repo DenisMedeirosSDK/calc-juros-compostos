@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export function Header() {
   return (
     <div>
@@ -7,8 +9,8 @@ export function Header() {
         </h1>
 
         <nav className="flex flex-row justify-around w-full md:justify-end md:gap-5 md:justify-center">
-          <a className="text-white hover:opacity-50" href="/">Investimento</a>
-          <a className="text-white hover:opacity-50" href="/imposto-de-importacao">Imposto de importação</a>
+          <Link className="text-white hover:opacity-50" to="/">Investimento</Link>
+          <Link className="text-white hover:opacity-50" to="/imposto-de-importacao">Imposto de importação</Link>
         </nav>
       </header>
     </div>

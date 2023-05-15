@@ -151,11 +151,12 @@ export function App() {
 
               onValueChange={(value) => handleValueChange(value[0])}
             >
-              <Slider.Track className="relative h-1 w-full grow rounded-full bg-white dark:bg-gray-800">
-                <Slider.Range className="absolute h-full rounded-full bg-purple-600 dark:bg-white" />
+              <Slider.Track className="relative h-1 w-full grow rounded-full bg-zinc-800">
+                <Slider.Range className="absolute h-full rounded-full bg-white" />
               </Slider.Track>
               <Slider.Thumb
-                className="block h-5 w-5 rounded-full bg-purple-600 dark:bg-white focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                className="block h-5 w-5 rounded-full bg-white focus:outline-none 
+                focus-visible:ring focus-visible:ring-green-500 focus-visible:ring-opacity-75"
               />
             </Slider.Root>
 

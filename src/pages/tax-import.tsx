@@ -37,7 +37,7 @@ export function TaxImport() {
   // const [money, setMoney] = useState(0);
   // const [dollar, setDollar] = useState(0);
   const [tax, setTax] = useState(60);
-  const [taxICMS, setTaxICMS] = useState(18);
+  const [taxICMS, setTaxICMS] = useState(17);
 
   const [isAdvanced, setIsAdvanced] = useState(false);
   const [isDollarToday, setIsDollarToday] = useState(false);

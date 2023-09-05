@@ -6,33 +6,43 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Button } from './ui/button'
 
+type MenuItem = {
+  label: string
+  path: string
+}
+
+const MENU_LIST: MenuItem[] = [
+  { label: 'Home', path: '/' },
+  { label: 'Importação', path: '/importacao' },
+  { label: 'Investimento', path: '/investimento' },
+]
+
 export function Header() {
+  const pathname = usePathname()
+
   return (
-    <header className="text-slate-900 dark:text-slate-100 w-full mx-auto flex max-w-screen-xl p-5">
+    <header className="w-full mx-auto flex max-w-screen-xl p-5">
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <Button asChild variant="link">
-              <Link href="/">Home</Link>
-            </Button>
-            {/* <Link href="/" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Home
-              </NavigationMenuLink>
-            </Link> */}
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Button asChild variant="link">
-              <Link href="/importacao">Importação</Link>
-            </Button>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Button asChild variant="link">
-              <Link href="/investimento">Investimento</Link>
-            </Button>
-          </NavigationMenuItem>
+          {MENU_LIST.map((link) => {
+            const isActive = pathname === link.path
+            return (
+              <NavigationMenuItem key={link.path}>
+                <Button asChild variant="link">
+                  <Link
+                    href={link.path}
+                    data-active={isActive}
+                    className={'data-[active=true]:text-slate-600'}
+                  >
+                    {link.label}
+                  </Link>
+                </Button>
+              </NavigationMenuItem>
+            )
+          })}
         </NavigationMenuList>
       </NavigationMenu>
     </header>

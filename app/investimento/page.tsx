@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
+import { GoogleAdSense } from '@/components/google-adsense'
 import {
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
 import {
   Table,
   TableBody,
@@ -21,9 +23,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import * as Slider from '@radix-ui/react-slider'
-import { GoogleAdSense } from '@/components/google-adsense'
-import { Slider } from '@/components/ui/slider'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'

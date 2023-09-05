@@ -42,13 +42,6 @@ import { formattedCurrency, formattedPercent } from '@/utils/formatted-numbers'
 import { calculateImportTaxes } from '../../utils/calculate-import'
 
 const formSchema = z.object({
-  // price: z.string().transform((value) =>
-  //   value
-  //     .replace(/[^\d,.]/g, '')
-  //     .replace(/(R|\$|\s)/g, '')
-  //     .replace(/[^0-9,.]/g, '')
-  //     .replace(',', '.'),
-  // ),
   price: z
     .string()
     .transform((value) => value.replace(/[^\d,]/g, '').replace(',', '.')),
@@ -66,6 +59,7 @@ export default function InternacionalImport() {
   const [valueTotal, setValueTotal] = useState('')
 
   const { addCalculation, history } = useImportTaxesStore()
+
   const {
     register,
     handleSubmit,

@@ -1,6 +1,28 @@
 'use client'
+
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as Slider from '@radix-ui/react-slider'
+// import * as Slider from '@radix-ui/react-slider'
+import { Slider } from '@/components/ui/slider'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -22,8 +44,12 @@ function formattedCurrency(amount: number) {
 }
 
 const formSchema = z.object({
-  initialMoney: z.coerce.number().min(0),
-  monthMoney: z.coerce.number().min(0),
+  initialMoney: z
+    .string()
+    .transform((value) => value.replace(/[^\d,]/g, '').replace(',', '.')),
+  monthMoney: z
+    .string()
+    .transform((value) => value.replace(/[^\d,]/g, '').replace(',', '.')),
   period: z.coerce.number().min(1),
 })
 
@@ -49,8 +75,8 @@ export default function Investment() {
   })
 
   function handleCalculate(data: FormSchema) {
-    const convInitialMoney = data.initialMoney
-    const convMonthMoney = data.monthMoney
+    const convInitialMoney = Number(data.initialMoney)
+    const convMonthMoney = Number(data.monthMoney)
     const convInterestPercentage = interestPercentage / 100
     const convPeriod = data.period
 
@@ -98,22 +124,19 @@ export default function Investment() {
   }
 
   return (
-    <div className="bg-zinc-900 text-zinc-100 flex flex-col w-full min-h-screen h-full items-center pb-10">
+    <div className="flex flex-col w-full min-h-screen h-full items-center pb-10">
       <main className="flex flex-col justify-center items-center w-full px-5 mx-auto gap-10">
         <form
           className="grid md:grid-cols-2 gap-4 w-full max-w-5xl mt-10"
           onSubmit={handleSubmit(handleCalculate)}
         >
-          <div className="flex flex-col">
-            <label htmlFor="" className="font-semibold mb-2">
-              Valor inicial
-            </label>
-            <input
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="initialMoney">Valor inicial</Label>
+            <Input
+              id="initialMoney"
               type="text"
               required
               placeholder="R$1.000,00"
-              className="p-3 bg-zinc-800 rounded-lg border-collapse
-            outline-none focus:ring-2 ring-green-300"
               // value={initialMoney}
               // onChange={(event: FormEvent<HTMLInputElement>) =>
               //   setInitialMoney(event.currentTarget.value)
@@ -126,16 +149,13 @@ export default function Investment() {
               }}
             />
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="" className="font-semibold mb-2">
-              Valor mensal
-            </label>
-            <input
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="monthMoney">Valor mensal</Label>
+            <Input
+              id="monthMoney"
               type="text"
               required
               placeholder="R$100,00"
-              className="p-3 bg-zinc-800 rounded-lg border-collapse
-            outline-none focus:ring-2 ring-green-300"
               // value={monthMoney}
               // onChange={(event: FormEvent<HTMLInputElement>) =>
               //   setMonthMoney(event.currentTarget.value)
@@ -149,8 +169,8 @@ export default function Investment() {
               }}
             />
           </div>
-          <div className="flex flex-col justify-between">
-            <label
+          <div className="flex flex-col justify-between gap-2">
+            <Label
               htmlFor=""
               className="font-semibold mb-2 flex flex-row justify-between"
             >
@@ -158,25 +178,17 @@ export default function Investment() {
                 Taxa de juros <i>(a.m)</i>
               </p>
               <span className="">{interestPercentage}%</span>
-            </label>
+            </Label>
 
-            <Slider.Root
+            <Slider
               defaultValue={[0.9]}
               min={0.1}
               max={2}
               step={0.01}
               aria-label="Volume"
-              className="relative flex h-5 w-full touch-none items-center"
+              className="w-full"
               onValueChange={(value) => handleValueChange(value[0])}
-            >
-              <Slider.Track className="relative h-1 w-full grow rounded-full bg-zinc-800">
-                <Slider.Range className="absolute h-full rounded-full bg-white" />
-              </Slider.Track>
-              <Slider.Thumb
-                className="block h-5 w-5 rounded-full bg-white focus:outline-none 
-                focus-visible:ring focus-visible:ring-green-500 focus-visible:ring-opacity-75"
-              />
-            </Slider.Root>
+            />
 
             {/* 
             <input
@@ -190,15 +202,13 @@ export default function Investment() {
             // }
             /> */}
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="" className="font-semibold mb-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="">
               Período <i>(meses)</i>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               placeholder="10"
-              className="p-3 bg-zinc-800 rounded-lg border-collapse
-            outline-none focus:ring-2 ring-green-300"
               // value={period}
               // onChange={(event: FormEvent<HTMLInputElement>) =>
               //   setPeriod(event.currentTarget.value)
@@ -212,87 +222,98 @@ export default function Investment() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-green-300 hover:bg-green-500 transition-colors rounded-lg h-12 text-zinc-900 font-semibold disabled:bg-zinc-500"
-          >
+          <Button type="submit" disabled={isSubmitting}>
             Calcular
-          </button>
+          </Button>
         </form>
         <section className="w-full max-w-5xl">
-          <div className="grid md:grid-cols-3 md:justify-between items-center gap-5">
-            <div
-              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
-             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-            >
-              <p className="capitalize font-medium">Valor total final</p>
-              <span className="text-green-300 font-semibold">
-                {formattedCurrency(finalTotalAmount)}
-              </span>
-            </div>
-            <div
-              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
-             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-            >
-              <p className="capitalize font-medium">Valor total investido</p>
-              <span className="text-green-300 font-semibold">
-                {formattedCurrency(finalTotalInvested)}
-              </span>
-            </div>
-            <div
-              className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
-             drop-shadow-md transform hover:scale-105 transition-all hover:ring-2 ring-green-300"
-            >
-              <p className="capitalize font-medium">Total em juros</p>
-              <span className="text-green-300 font-semibold">
-                {formattedCurrency(totalInterest)}
-              </span>
-            </div>
+          <div className="grid md:grid-cols-3 md:justify-between items-center gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total</CardTitle>
+                {/* <CardDescription>Card Description</CardDescription> */}
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">
+                  {formattedCurrency(finalTotalAmount)}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Valor investido
+                </CardTitle>
+                {/* <CardDescription>Card Description</CardDescription> */}
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">
+                  {formattedCurrency(finalTotalInvested)}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total em juros
+                </CardTitle>
+                <CardDescription>Valor recebido</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">
+                  {formattedCurrency(totalInterest)}
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </section>
-        <section className="w-full overflow-auto max-h-[620px] max-w-5xl">
-          <table className="min-w-full">
-            <thead className="bg-zinc-800">
-              <tr className="capitalize">
-                <th className="p-3 tracking-wide text-center rounded-tl-lg">
-                  Mês
-                </th>
-                <th className="p-3 tracking-wide text-center">Juros</th>
-                <th className="p-3 tracking-wide text-center">
-                  Total investido
-                </th>
-                <th className="p-3 tracking-wide text-center">Total juros</th>
-                <th className="p-3 tracking-wide text-center rounded-tr-lg">
-                  Total acumulado
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((data) => {
-                return (
-                  <tr
-                    key={data.month}
-                    className="bg-zinc-700 even:bg-zinc-800 last:rounded-b-lg"
-                  >
-                    <td className="p-3 text-center ">{data.month}</td>
-                    <td className="p-3 text-center">
-                      {formattedCurrency(data.fees)}
-                    </td>
-                    <td className="p-3 text-center">
-                      {formattedCurrency(data.totalInvested)}
-                    </td>
-                    <td className="p-3 text-center">
-                      {formattedCurrency(data.totalInterest)}
-                    </td>
-                    <td className="p-3 text-center">
-                      {formattedCurrency(data.totalAccumulated)}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        <section className="w-full max-w-5xl">
+          <ScrollArea className="w-full h-[620px]">
+            <Table className="min-w-full">
+              <TableHeader className="">
+                <TableRow className="capitalize">
+                  <TableHead className="p-3 tracking-wide text-center rounded-tl-lg">
+                    Mês
+                  </TableHead>
+                  <TableHead className="p-3 tracking-wide text-center">
+                    Juros
+                  </TableHead>
+                  <TableHead className="p-3 tracking-wide text-center">
+                    Total investido
+                  </TableHead>
+                  <TableHead className="p-3 tracking-wide text-center">
+                    Total juros
+                  </TableHead>
+                  <TableHead className="p-3 tracking-wide text-center rounded-tr-lg">
+                    Total acumulado
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {result.map((data) => {
+                  return (
+                    <TableRow key={data.month} className=" last:rounded-b-lg">
+                      <TableCell className="p-3 text-center ">
+                        {data.month}
+                      </TableCell>
+                      <TableCell className="p-3 text-center">
+                        {formattedCurrency(data.fees)}
+                      </TableCell>
+                      <TableCell className="p-3 text-center">
+                        {formattedCurrency(data.totalInvested)}
+                      </TableCell>
+                      <TableCell className="p-3 text-center">
+                        {formattedCurrency(data.totalInterest)}
+                      </TableCell>
+                      <TableCell className="p-3 text-center">
+                        {formattedCurrency(data.totalAccumulated)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         </section>
       </main>
     </div>

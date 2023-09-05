@@ -41,12 +41,13 @@ import { formattedCurrency, formattedPercent } from '@/utils/formatted-numbers'
 import { calculateImportTaxes } from '../../utils/calculate-import'
 
 const formSchema = z.object({
-  price: z
-    .string()
-    .transform((value) => value.replace(/[^\d,]/g, '').replace(',', '.')),
+  price: z.string().min(2, {
+    message: 'Adicione o valor do produto',
+  }),
 })
 
 type FormSchema = z.infer<typeof formSchema>
+
 export default function InternacionalImport() {
   const [tax, setTax] = useState(60)
   const [taxICMS, setTaxICMS] = useState(17)
@@ -62,15 +63,20 @@ export default function InternacionalImport() {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   })
 
   async function handleCalculate({ price }: FormSchema) {
+    const formattedPrice = parseFloat(
+      price.replace(/[^\d,]/g, '').replace(',', '.'),
+    )
+
     const { percentage, onlyTaxes, onlyTaxICMS, importTax, valueTotal } =
-      calculateImportTaxes(parseFloat(price), tax, taxICMS)
+      calculateImportTaxes(formattedPrice, tax, taxICMS)
+
+    console.log('PRICE', formattedPrice)
 
     setPercentage(percentage)
     setOnlyTaxes(onlyTaxes)
@@ -79,7 +85,7 @@ export default function InternacionalImport() {
     setValueTotal(valueTotal)
 
     addCalculation({
-      price: formattedCurrency(parseFloat(price)),
+      price: formattedCurrency(formattedPrice),
       percentage,
       onlyTaxes,
       onlyTaxICMS,
@@ -126,6 +132,9 @@ export default function InternacionalImport() {
           <Input
             id="productPrice"
             placeholder="R$ 1.500,00"
+            data-onError={!!errors.price}
+            required
+            className="data-[onError=true]:focus-visible:ring-red-500"
             {...register('price')}
           />
         </div>

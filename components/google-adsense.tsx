@@ -1,10 +1,15 @@
-/* eslint-disable prettier/prettier */
 import { useEffect } from 'react'
+
+declare global {
+  interface Window {
+    adsbygoogle: any[]
+  }
+}
 
 export function GoogleAdSense({ adSlot }: { adSlot: string }) {
   useEffect(() => {
-    if (window) {
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+    if (typeof window !== 'undefined') {
+      ;(window.adsbygoogle = window.adsbygoogle || []).push({})
     }
   }, [])
 

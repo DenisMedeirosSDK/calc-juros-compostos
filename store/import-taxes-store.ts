@@ -1,8 +1,5 @@
 import { create } from 'zustand'
 
-// Defina uma chave para armazenar no localStorage
-const localStorageKey = '@calcDM:importTax'
-
 export interface CalcImportTaxes {
   price: string
   percentage: string
@@ -21,22 +18,17 @@ export interface ImportTaxesStore {
 }
 
 export const useImportTaxesStore = create<ImportTaxesStore>((set, get) => {
-  // Tente recuperar o histórico do localStorage quando o aplicativo inicia
-  const storedHistory = localStorage.getItem(localStorageKey)
-  const initialHistory = storedHistory ? JSON.parse(storedHistory) : []
-
   return {
-    history: initialHistory,
+    history: [],
     addCalculation: (calculation: CalcImportTaxes) => {
       set((state) => {
         let newHistory = [...state.history, calculation]
 
+        // Verifica se o histórico tem mais de 20 itens
         if (newHistory.length > 20) {
+          // Se tiver mais de 20 itens, mantenha apenas os 20 mais recentes
           newHistory = newHistory.slice(newHistory.length - 20)
         }
-
-        // Armazene o histórico atualizado no localStorage
-        localStorage.setItem(localStorageKey, JSON.stringify(newHistory))
 
         return {
           history: newHistory,
@@ -44,8 +36,6 @@ export const useImportTaxesStore = create<ImportTaxesStore>((set, get) => {
       })
     },
     clearHistory: () => {
-      // Limpe o histórico e remova-o do localStorage
-      localStorage.removeItem(localStorageKey)
       set({ history: [] })
     },
   }

@@ -240,23 +240,20 @@ export default function InternacionalImport() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {history
-              .map((cell, index) => {
-                return (
-                  <TableRow key={index}>
-                    <TableCell>{cell.price}</TableCell>
-                    <TableCell>{cell.importTaxPercent}</TableCell>
-                    <TableCell>{cell.importTax}</TableCell>
-                    <TableCell>{cell.importTaxICMSPercent}</TableCell>
-                    <TableCell>{cell.onlyTaxICMS}</TableCell>
-                    <TableCell>{cell.onlyTaxes}</TableCell>
-                    <TableCell>{cell.valueTotal}</TableCell>
-                    <TableCell>{cell.percentage}</TableCell>
-                  </TableRow>
-                )
-              })
-              .slice()
-              .reverse()}
+            {history.map((cell, index) => {
+              return (
+                <TableRow key={index}>
+                  <TableCell>{cell.price}</TableCell>
+                  <TableCell>{cell.importTaxPercent}</TableCell>
+                  <TableCell>{cell.importTax}</TableCell>
+                  <TableCell>{cell.importTaxICMSPercent}</TableCell>
+                  <TableCell>{cell.onlyTaxICMS}</TableCell>
+                  <TableCell>{cell.onlyTaxes}</TableCell>
+                  <TableCell>{cell.valueTotal}</TableCell>
+                  <TableCell>{cell.percentage}</TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </section>

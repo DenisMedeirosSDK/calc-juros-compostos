@@ -12,16 +12,25 @@ export interface CalcImportTaxes {
   valueTotal: string
 }
 
-export interface ImportTaxesStore {
+interface States {
   history: CalcImportTaxes[]
+}
+
+interface Actions {
   addCalculation: (calculation: CalcImportTaxes) => void
   clearHistory: () => void
+}
+
+export interface ImportTaxesStore extends States, Actions {}
+
+const initialStates: States = {
+  history: [],
 }
 
 export const useImportTaxesStore = create<ImportTaxesStore>()(
   persist(
     (set, get) => ({
-      ...history,
+      ...initialStates,
       history: [],
       addCalculation: (calculation: CalcImportTaxes) => {
         set((state) => {

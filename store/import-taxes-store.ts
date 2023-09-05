@@ -29,7 +29,7 @@ const initialStates: States = {
 
 export const useImportTaxesStore = create<ImportTaxesStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialStates,
       history: [],
       addCalculation: (calculation: CalcImportTaxes) => {
@@ -53,7 +53,7 @@ export const useImportTaxesStore = create<ImportTaxesStore>()(
     }),
     {
       name: 'importTaxesStore', // Nome do armazenamento persistente
-      storage: createJSONStorage(() => sessionStorage), // Use sessionStorage para persistência de sessão
+      storage: createJSONStorage(() => localStorage), // Use sessionStorage para persistência de sessão
     },
   ),
 )

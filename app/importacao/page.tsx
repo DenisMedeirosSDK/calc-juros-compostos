@@ -36,7 +36,6 @@ import {
 import { AlertCircle } from 'lucide-react'
 
 import { GoogleAdSense } from '@/components/google-adsense'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useImportTaxesStore } from '@/store/import-taxes-store'
 import { formattedCurrency, formattedPercent } from '@/utils/formatted-numbers'
 import { calculateImportTaxes } from '../../utils/calculate-import'
@@ -180,7 +179,6 @@ export default function InternacionalImport() {
               <CardTitle className="text-sm font-medium">
                 Imposto de importação
               </CardTitle>
-              {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{importTax}</p>
@@ -191,7 +189,6 @@ export default function InternacionalImport() {
               <CardTitle className="text-sm font-medium">
                 Imposto de ICMS
               </CardTitle>
-              {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{onlyTaxICMS}</p>
@@ -202,7 +199,6 @@ export default function InternacionalImport() {
               <CardTitle className="text-sm font-medium">
                 Total de Imposto
               </CardTitle>
-              {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{onlyTaxes}</p>
@@ -211,7 +207,6 @@ export default function InternacionalImport() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Valor final</CardTitle>
-              {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{valueTotal}</p>
@@ -248,23 +243,23 @@ export default function InternacionalImport() {
         </div>
       </section>
 
-      <section className="mt-10 text-slate-900 dark:text-slate-100">
-        <ScrollArea className="w-full h-[620px]">
+      <section className="mt-10 w-full">
+        <div>
           <Table>
             <TableCaption>Histórico</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Preço do Produto</TableHead>
                 <TableHead>Imposto</TableHead>
-                <TableHead>Imposto</TableHead>
+                <TableHead>Imposto %</TableHead>
                 <TableHead>Imposto ICMS</TableHead>
-                <TableHead>Imposto ICMS</TableHead>
+                <TableHead>Imposto ICMS %</TableHead>
                 <TableHead>Total de impostos</TableHead>
                 <TableHead>Valor Final</TableHead>
                 <TableHead>Preço original - com imposto (%)</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="">
               {history
                 .map((cell, index) => {
                   return (
@@ -284,7 +279,7 @@ export default function InternacionalImport() {
                 .reverse()}
             </TableBody>
           </Table>
-        </ScrollArea>
+        </div>
       </section>
       <section className="mt-5">
         <GoogleAdSense adSlot="5984875372" />

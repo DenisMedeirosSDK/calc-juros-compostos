@@ -1,72 +1,84 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as Slider from '@radix-ui/react-slider';
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { formattedCurrency } from "./utils/format-currency";
+'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as Slider from '@radix-ui/react-slider'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
 
 interface ResponseTable {
-  month: number;
-  fees: number;
-  totalInvested: number;
-  totalInterest: number;
-  totalAccumulated: number;
+  month: number
+  fees: number
+  totalInvested: number
+  totalInterest: number
+  totalAccumulated: number
+}
+
+function formattedCurrency(amount: number) {
+  return Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  }).format(amount)
 }
 
 const formSchema = z.object({
   initialMoney: z.coerce.number().min(0),
   monthMoney: z.coerce.number().min(0),
   period: z.coerce.number().min(1),
-});
+})
 
-type FormSchema = z.infer<typeof formSchema>;
+type FormSchema = z.infer<typeof formSchema>
 
-export function App() {
+export default function Investment() {
+  const [interestPercentage, setInterestPercentage] = useState(0.9)
 
-  const [interestPercentage, setInterestPercentage] = useState(0.9);
+  const [finalTotalAmount, setFinalTotalAmount] = useState(0)
+  const [finalTotalInvested, setFinalTotalInvested] = useState(0)
+  const [totalInterest, setTotalInterest] = useState(0)
+  const [isCalculate, setIsCalculate] = useState(false)
 
-  const [finalTotalAmount, setFinalTotalAmount] = useState(0);
-  const [finalTotalInvested, setFinalTotalInvested] = useState(0);
-  const [totalInterest, setTotalInterest] = useState(0);
-  const [isCalculate, setIsCalculate] = useState(false);
+  const [result, setResult] = useState<ResponseTable[]>([])
 
-  const [result, setResult] = useState<ResponseTable[]>([]);
-
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema)
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
   })
 
   function handleCalculate(data: FormSchema) {
-    const convInitialMoney = data.initialMoney;
-    const convMonthMoney = data.monthMoney;
-    const convInterestPercentage = interestPercentage / 100;
-    const convPeriod = data.period;
+    const convInitialMoney = data.initialMoney
+    const convMonthMoney = data.monthMoney
+    const convInterestPercentage = interestPercentage / 100
+    const convPeriod = data.period
 
-    let totalInvested = convInitialMoney;
-    let totalInterest = 0;
-    let totalAccumulated = convInitialMoney;
-    let results: ResponseTable[] = [];
+    let totalInvested = convInitialMoney
+    let totalInterest = 0
+    let totalAccumulated = convInitialMoney
+    const results: ResponseTable[] = []
 
     const sumFinalTotalAmount =
       convInitialMoney * Math.pow(1 + convInterestPercentage, convPeriod) +
       (convMonthMoney *
         (Math.pow(1 + convInterestPercentage, convPeriod) - 1)) /
-      convInterestPercentage;
+        convInterestPercentage
 
-    const sumTotalInvested = convInitialMoney + convMonthMoney * convPeriod;
+    const sumTotalInvested = convInitialMoney + convMonthMoney * convPeriod
 
-    setFinalTotalInvested(sumTotalInvested);
-    setTotalInterest(sumFinalTotalAmount - sumTotalInvested);
-    setFinalTotalAmount(sumFinalTotalAmount);
+    setFinalTotalInvested(sumTotalInvested)
+    setTotalInterest(sumFinalTotalAmount - sumTotalInvested)
+    setFinalTotalAmount(sumFinalTotalAmount)
 
     for (let i = 1; i <= convPeriod; i++) {
-      let fees = totalAccumulated * convInterestPercentage;
+      const fees = totalAccumulated * convInterestPercentage
 
-      const amount = totalAccumulated + fees;
+      const amount = totalAccumulated + fees
 
-      totalInvested = totalInvested + convMonthMoney;
-      totalInterest = totalInterest + fees;
-      totalAccumulated = amount + convMonthMoney;
+      totalInvested = totalInvested + convMonthMoney
+      totalInterest = totalInterest + fees
+      totalAccumulated = amount + convMonthMoney
 
       results.push({
         month: i,
@@ -74,13 +86,12 @@ export function App() {
         totalInvested,
         totalInterest,
         totalAccumulated,
-      });
+      })
     }
 
-    setResult(results);
-    setIsCalculate(true);
+    setResult(results)
+    setIsCalculate(true)
   }
-
 
   function handleValueChange(newValue: number) {
     setInterestPercentage(newValue)
@@ -107,10 +118,10 @@ export function App() {
               // onChange={(event: FormEvent<HTMLInputElement>) =>
               //   setInitialMoney(event.currentTarget.value)
               // }
-              {...register("initialMoney")}
+              {...register('initialMoney')}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSubmit(handleCalculate)();
+                if (e.key === 'Enter') {
+                  handleSubmit(handleCalculate)()
                 }
               }}
             />
@@ -130,25 +141,32 @@ export function App() {
               //   setMonthMoney(event.currentTarget.value)
               // }
 
-              {...register("monthMoney")}
+              {...register('monthMoney')}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSubmit(handleCalculate)();
+                if (e.key === 'Enter') {
+                  handleSubmit(handleCalculate)()
                 }
               }}
             />
           </div>
           <div className="flex flex-col justify-between">
-            <label htmlFor="" className="font-semibold mb-2 flex flex-row justify-between">
+            <label
+              htmlFor=""
+              className="font-semibold mb-2 flex flex-row justify-between"
+            >
               <p>
                 Taxa de juros <i>(a.m)</i>
               </p>
               <span className="">{interestPercentage}%</span>
             </label>
 
-            <Slider.Root defaultValue={[0.9]} min={0.1} max={2} step={0.01} aria-label="Volume"
+            <Slider.Root
+              defaultValue={[0.9]}
+              min={0.1}
+              max={2}
+              step={0.01}
+              aria-label="Volume"
               className="relative flex h-5 w-full touch-none items-center"
-
               onValueChange={(value) => handleValueChange(value[0])}
             >
               <Slider.Track className="relative h-1 w-full grow rounded-full bg-zinc-800">
@@ -185,10 +203,10 @@ export function App() {
               // onChange={(event: FormEvent<HTMLInputElement>) =>
               //   setPeriod(event.currentTarget.value)
               // }
-              {...register("period")}
+              {...register('period')}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSubmit(handleCalculate)();
+                if (e.key === 'Enter') {
+                  handleSubmit(handleCalculate)()
                 }
               }}
             />
@@ -203,7 +221,6 @@ export function App() {
           </button>
         </form>
         <section className="w-full max-w-5xl">
-
           <div className="grid md:grid-cols-3 md:justify-between items-center gap-5">
             <div
               className="flex flex-col justify-center items-center bg-zinc-700 p-3 rounded-lg
@@ -233,7 +250,6 @@ export function App() {
               </span>
             </div>
           </div>
-
         </section>
         <section className="w-full overflow-auto max-h-[620px] max-w-5xl">
           <table className="min-w-full">
@@ -273,12 +289,12 @@ export function App() {
                       {formattedCurrency(data.totalAccumulated)}
                     </td>
                   </tr>
-                );
+                )
               })}
             </tbody>
           </table>
         </section>
       </main>
     </div>
-  );
+  )
 }

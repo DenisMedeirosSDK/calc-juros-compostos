@@ -18,13 +18,17 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5699676851939916"
-          crossorigin="anonymous"
-        ></script>
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5699676851939916"
+            crossOrigin="anonymous"
+          ></script>
+        )}
       </head>
-      <body className={`${inter.className} bg-slate-100 dark:bg-slate-950`}>
+      <body
+        className={`${inter.className} bg-slate-100 dark:bg-slate-950 text-slate-950 dark:text-slate-100`}
+      >
         <Header />
         {children}
       </body>

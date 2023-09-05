@@ -28,6 +28,11 @@ export function Header() {
               <Link href="/importacao">Importação</Link>
             </Button>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Button asChild variant="link">
+              <Link href="/investimento">Investimento</Link>
+            </Button>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </header>

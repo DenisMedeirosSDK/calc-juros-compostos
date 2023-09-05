@@ -13,7 +13,7 @@ interface ResponseTable {
   totalAccumulated: number
 }
 
-export function formattedCurrency(amount: number) {
+function formattedCurrency(amount: number) {
   return Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',

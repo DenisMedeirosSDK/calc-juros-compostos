@@ -1,6 +1,12 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,7 +36,9 @@ import {
 import { AlertCircle } from 'lucide-react'
 
 import { GoogleAdSense } from '@/components/google-adsense'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useImportTaxesStore } from '@/store/import-taxes-store'
+import { formattedCurrency, formattedPercent } from '@/utils/formatted-numbers'
 import { calculateImportTaxes } from '../../utils/calculate-import'
 
 const formSchema = z.object({
@@ -68,7 +76,6 @@ export default function InternacionalImport() {
   })
 
   async function handleCalculate({ price }: FormSchema) {
-    console.log(price)
     const { percentage, onlyTaxes, onlyTaxICMS, importTax, valueTotal } =
       calculateImportTaxes(parseFloat(price), tax, taxICMS)
 
@@ -79,22 +86,30 @@ export default function InternacionalImport() {
     setValueTotal(valueTotal)
 
     addCalculation({
-      price: price.replace('.', ',').replace(/[^\d,]/g, ''),
+      price: formattedCurrency(parseFloat(price)),
       percentage,
       onlyTaxes,
       onlyTaxICMS,
       importTax,
-      importTaxPercent: tax.toFixed(2),
-      importTaxICMSPercent: taxICMS.toFixed(2),
+      importTaxPercent: formattedPercent(tax / 100),
+      importTaxICMSPercent: formattedPercent(taxICMS / 100),
       valueTotal,
     })
   }
 
   return (
-    <main className="flex flex-col w-full p-5 min-h-screen md:max-w-screen-xl mx-auto ">
+    <main className="flex flex-col w-full p-5 min-h-screen md:max-w-screen-xl mx-auto">
+      <div className="mb-5 flex flex-col w-full">
+        <h1 className="font-bold text-2xl">
+          Quanto vai ficar minhas compras internacionais?
+        </h1>
+        <span className="font-light text-sm italic opacity-75">
+          Shein, Shopee, Aliexpress
+        </span>
+      </div>
       <form
         onSubmit={handleSubmit(handleCalculate)}
-        className="grid gap-5 md:grid-cols-2 w-full text-slate-900 dark:text-slate-100"
+        className="grid gap-5 md:grid-cols-2 w-full"
       >
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
@@ -145,9 +160,9 @@ export default function InternacionalImport() {
             <Label htmlFor="taxICMS" title="Imposto de ICMS">
               Imposto de ICMS
             </Label>
-            <span className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
+            <p className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
               {taxICMS}%
-            </span>
+            </p>
           </div>
           <Slider
             id="taxICMS"
@@ -165,7 +180,7 @@ export default function InternacionalImport() {
       </form>
 
       <section className="mt-20">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -174,7 +189,7 @@ export default function InternacionalImport() {
               {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">R$ {importTax}</p>
+              <p className="text-2xl font-bold">{importTax}</p>
             </CardContent>
           </Card>
           <Card>
@@ -185,7 +200,7 @@ export default function InternacionalImport() {
               {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">R$ {onlyTaxICMS}</p>
+              <p className="text-2xl font-bold">{onlyTaxICMS}</p>
             </CardContent>
           </Card>
           <Card>
@@ -196,7 +211,7 @@ export default function InternacionalImport() {
               {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">R$ {onlyTaxes}</p>
+              <p className="text-2xl font-bold">{onlyTaxes}</p>
             </CardContent>
           </Card>
           <Card>
@@ -205,57 +220,80 @@ export default function InternacionalImport() {
               {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">R$ {valueTotal}</p>
+              <p className="text-2xl font-bold">{valueTotal}</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Porcentagem</CardTitle>
-              {/* <CardDescription>Card Description</CardDescription> */}
+              <div>
+                <CardTitle className="text-sm font-medium">
+                  Preço original - imposto (%)
+                </CardTitle>
+              </div>
+
+              <CardDescription>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger type="button" disabled>
+                      <AlertCircle size={16} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        Você esta pagando {percentage} de imposto do valor
+                        original do produto.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{percentage}%</p>
+              <p className="text-2xl font-bold">{percentage}</p>
             </CardContent>
           </Card>
         </div>
       </section>
 
+      <section className="mt-10 text-slate-900 dark:text-slate-100">
+        <ScrollArea className="w-full h-[620px]">
+          <Table>
+            <TableCaption>Histórico</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Preço do Produto</TableHead>
+                <TableHead>Imposto</TableHead>
+                <TableHead>Imposto</TableHead>
+                <TableHead>Imposto ICMS</TableHead>
+                <TableHead>Imposto ICMS</TableHead>
+                <TableHead>Total de impostos</TableHead>
+                <TableHead>Valor Final</TableHead>
+                <TableHead>Preço original - com imposto (%)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {history
+                .map((cell, index) => {
+                  return (
+                    <TableRow key={index}>
+                      <TableCell>{cell.price}</TableCell>
+                      <TableCell>{cell.importTaxPercent}</TableCell>
+                      <TableCell>{cell.importTax}</TableCell>
+                      <TableCell>{cell.importTaxICMSPercent}</TableCell>
+                      <TableCell>{cell.onlyTaxICMS}</TableCell>
+                      <TableCell>{cell.onlyTaxes}</TableCell>
+                      <TableCell>{cell.valueTotal}</TableCell>
+                      <TableCell>{cell.percentage}</TableCell>
+                    </TableRow>
+                  )
+                })
+                .slice()
+                .reverse()}
+            </TableBody>
+          </Table>
+        </ScrollArea>
+      </section>
       <section className="mt-5">
         <GoogleAdSense adSlot="5984875372" />
-      </section>
-
-      <section className="mt-20 text-slate-900 dark:text-slate-100">
-        <Table>
-          <TableCaption>Histórico</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Preço do Produto - R$</TableHead>
-              <TableHead>Imposto %</TableHead>
-              <TableHead>Imposto - R$</TableHead>
-              <TableHead>Imposto ICMS - %</TableHead>
-              <TableHead>Imposto ICMS - R$</TableHead>
-              <TableHead>Total de impostos - R$</TableHead>
-              <TableHead>Valor Final - R$</TableHead>
-              <TableHead>Porcentagem - %</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {history.map((cell, index) => {
-              return (
-                <TableRow key={index}>
-                  <TableCell>{cell.price}</TableCell>
-                  <TableCell>{cell.importTaxPercent}</TableCell>
-                  <TableCell>{cell.importTax}</TableCell>
-                  <TableCell>{cell.importTaxICMSPercent}</TableCell>
-                  <TableCell>{cell.onlyTaxICMS}</TableCell>
-                  <TableCell>{cell.onlyTaxes}</TableCell>
-                  <TableCell>{cell.valueTotal}</TableCell>
-                  <TableCell>{cell.percentage}</TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
       </section>
     </main>
   )

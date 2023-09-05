@@ -1,3 +1,5 @@
+import { formattedCurrency, formattedPercent } from './formatted-numbers'
+
 export interface ReturnCalcImportTaxes {
   percentage: string
   onlyTaxes: string
@@ -27,7 +29,7 @@ export function calculateImportTaxes(
   const onlyTaxes = onlyTaxICMS + importTax
 
   // Pegar a porcentagem do valor final com o valor original
-  const percentage = ((valueTotal - price) / price) * 100
+  const percentage = (valueTotal - price) / price
 
   // console.log('percentage', percentage)
   // console.log('onlyTaxes', onlyTaxes)
@@ -35,25 +37,17 @@ export function calculateImportTaxes(
   // console.log('importTax', importTax)
   // console.log('Value Total', valueTotal)
 
+  const percentageFormatted = formattedPercent(percentage)
+  const onlyTaxesFormatted = formattedCurrency(onlyTaxes)
+  const onlyTaxICMSFormatted = formattedCurrency(onlyTaxICMS)
+  const importTaxFormatted = formattedCurrency(importTax)
+  const valueTotalFormatted = formattedCurrency(valueTotal)
+
   return {
-    percentage: percentage.toFixed(2),
-    onlyTaxes: onlyTaxes
-      .toFixed(2)
-      .replace('.', ',')
-      .replace(/[^\d,]/g, ''),
-    onlyTaxICMS: onlyTaxICMS
-      .toFixed(2)
-      .replace('.', ',')
-      .replace(/[^\d,]/g, ''),
-    importTax: importTax
-      .toFixed(2)
-      .replace('.', ',')
-      .replace(/[^\d,]/g, ''),
-    valueTotal: valueTotal
-      .toFixed(2)
-      .replace('.', ',')
-      .replace(/[^\d,]/g, ''),
+    percentage: percentageFormatted,
+    onlyTaxes: onlyTaxesFormatted,
+    onlyTaxICMS: onlyTaxICMSFormatted,
+    importTax: importTaxFormatted,
+    valueTotal: valueTotalFormatted,
   }
 }
-
-calculateImportTaxes(513.17, 60, 17)

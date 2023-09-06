@@ -76,8 +76,6 @@ export default function InternacionalImport() {
     const { percentage, onlyTaxes, onlyTaxICMS, importTax, valueTotal } =
       calculateImportTaxes(formattedPrice, tax, taxICMS)
 
-    console.log('PRICE', formattedPrice)
-
     setPercentage(percentage)
     setOnlyTaxes(onlyTaxes)
     setOnlyTaxICMS(onlyTaxICMS)
@@ -253,7 +251,7 @@ export default function InternacionalImport() {
       </section>
 
       <section className="mt-10 w-full">
-        <div>
+        <div className="max-h-[620px] h-full overflow-auto">
           <Table>
             <TableCaption>Histórico</TableCaption>
             <TableHeader>

@@ -250,32 +250,38 @@ export default function Investment() {
         </div>
       </section>
       <section className="mt-10">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Mês</TableHead>
-              <TableHead>Juros</TableHead>
-              <TableHead>Total investido</TableHead>
-              <TableHead>Total juros</TableHead>
-              <TableHead>Total acumulado</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {result.map((data) => {
-              return (
-                <TableRow key={data.month}>
-                  <TableCell>{data.month}</TableCell>
-                  <TableCell>{formattedCurrency(data.fees)}</TableCell>
-                  <TableCell>{formattedCurrency(data.totalInvested)}</TableCell>
-                  <TableCell>{formattedCurrency(data.totalInterest)}</TableCell>
-                  <TableCell>
-                    {formattedCurrency(data.totalAccumulated)}
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+        <div className="max-h-[620px] h-full overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Mês</TableHead>
+                <TableHead>Juros</TableHead>
+                <TableHead>Total investido</TableHead>
+                <TableHead>Total juros</TableHead>
+                <TableHead>Total acumulado</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {result.map((data) => {
+                return (
+                  <TableRow key={data.month}>
+                    <TableCell>{data.month}</TableCell>
+                    <TableCell>{formattedCurrency(data.fees)}</TableCell>
+                    <TableCell>
+                      {formattedCurrency(data.totalInvested)}
+                    </TableCell>
+                    <TableCell>
+                      {formattedCurrency(data.totalInterest)}
+                    </TableCell>
+                    <TableCell>
+                      {formattedCurrency(data.totalAccumulated)}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </section>
       <section className="mt-5">
         <GoogleAdSense adSlot="5984875372" />

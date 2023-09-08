@@ -17,11 +17,11 @@ interface States {
 }
 
 interface Actions {
-  addCalculation: (calculation: CalcImportTaxes) => void
+  addCalculation: (calculation: CalcImportTaxes) => Promise<void>
   clearHistory: () => void
 }
 
-export interface ImportTaxesStore extends States, Actions {}
+export interface ImportTaxesStore extends States, Actions { }
 
 const initialStates: States = {
   history: [],
@@ -32,14 +32,14 @@ export const useImportTaxesStore = create<ImportTaxesStore>()(
     (set) => ({
       ...initialStates,
       history: [],
-      addCalculation: (calculation: CalcImportTaxes) => {
+      addCalculation: async (calculation: CalcImportTaxes) => {
         set((state) => {
           let newHistory = [...state.history, calculation]
 
-          // Verifica se o histórico tem mais de 20 itens
-          if (newHistory.length > 20) {
-            // Se tiver mais de 20 itens, mantenha apenas os 20 mais recentes
-            newHistory = newHistory.slice(newHistory.length - 20)
+          // Verifica se o histórico tem mais de 10 itens
+          if (newHistory.length > 10) {
+            // Se tiver mais de 10 itens, mantenha apenas os 10 mais recentes
+            newHistory = newHistory.slice(newHistory.length - 10)
           }
 
           return {
@@ -52,8 +52,10 @@ export const useImportTaxesStore = create<ImportTaxesStore>()(
       },
     }),
     {
-      name: 'importTaxesStore', // Nome do armazenamento persistente
-      storage: createJSONStorage(() => localStorage), // Use sessionStorage para persistência de sessão
+      name: 'importTaxesStore',
+      storage: createJSONStorage(() => localStorage),
+      // skipHydration: true,
+
     },
   ),
 )

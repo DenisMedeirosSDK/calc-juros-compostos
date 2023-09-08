@@ -1,5 +1,13 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AlertCircle } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
+
+import { GoogleAdSense } from '@/components/google-adsense'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -7,17 +15,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import z from 'zod'
-
 import {
   Table,
   TableBody,
@@ -33,9 +33,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { AlertCircle } from 'lucide-react'
 
-import { GoogleAdSense } from '@/components/google-adsense'
+
 import { useImportTaxesStore } from '@/store/import-taxes-store'
 import { formattedCurrency, formattedPercent } from '@/utils/formatted-numbers'
 import { calculateImportTaxes } from '../../utils/calculate-import'
@@ -58,7 +57,7 @@ export default function InternacionalImport() {
   const [importTax, setImportTax] = useState('')
   const [valueTotal, setValueTotal] = useState('')
 
-  const { addCalculation, history } = useImportTaxesStore()
+  const { addCalculation, history, clearHistory } = useImportTaxesStore()
 
   const {
     register,
@@ -115,7 +114,7 @@ export default function InternacionalImport() {
             </Label>
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger type="button" disabled>
+                <TooltipTrigger type="button">
                   <AlertCircle size={16} />
                 </TooltipTrigger>
                 <TooltipContent>
@@ -140,11 +139,25 @@ export default function InternacionalImport() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="tax" title="Imposto">
-              Imposto
+              Imposto Federal
             </Label>
-            <span className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
-              {tax}%
-            </span>
+            <div className='flex gap-3 items-center'>
+              <span className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
+                {tax}%
+              </span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger type="button">
+                    <AlertCircle size={16} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Atualmente o imposto federal é de 60% em cima do produto + frete.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <Slider
             id="tax"
@@ -160,9 +173,24 @@ export default function InternacionalImport() {
             <Label htmlFor="taxICMS" title="Imposto de ICMS">
               Imposto de ICMS
             </Label>
-            <p className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
-              {taxICMS}%
-            </p>
+            <div className='flex gap-3 items-center'>
+              <p className="w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border">
+                {taxICMS}%
+              </p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger type="button">
+                    <AlertCircle size={16} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Atualmente o imposto de ICMS é de 17% em cima do produto já com imposto federal.
+                    </p>
+                    <p>O calculo de ICMS é feito por dentro.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <Slider
             id="taxICMS"
@@ -251,41 +279,54 @@ export default function InternacionalImport() {
       </section>
 
       <section className="mt-10 w-full">
+        <div className='flex justify-end mb-3'>
+          <Button onClick={clearHistory} disabled={history.length === 0} variant="destructive">
+            Limpar
+          </Button>
+        </div>
         <div className="max-h-[620px] h-full overflow-auto">
-          <Table>
-            <TableCaption>Histórico</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Preço do Produto</TableHead>
-                <TableHead>Imposto</TableHead>
-                <TableHead>Imposto %</TableHead>
-                <TableHead>Imposto ICMS</TableHead>
-                <TableHead>Imposto ICMS %</TableHead>
-                <TableHead>Total de impostos</TableHead>
-                <TableHead>Valor Final</TableHead>
-                <TableHead>Preço original - com imposto (%)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="">
-              {history
-                .map((cell, index) => {
-                  return (
-                    <TableRow key={index}>
-                      <TableCell>{cell.price}</TableCell>
-                      <TableCell>{cell.importTaxPercent}</TableCell>
-                      <TableCell>{cell.importTax}</TableCell>
-                      <TableCell>{cell.importTaxICMSPercent}</TableCell>
-                      <TableCell>{cell.onlyTaxICMS}</TableCell>
-                      <TableCell>{cell.onlyTaxes}</TableCell>
-                      <TableCell>{cell.valueTotal}</TableCell>
-                      <TableCell>{cell.percentage}</TableCell>
-                    </TableRow>
-                  )
-                })
-                .slice()
-                .reverse()}
-            </TableBody>
-          </Table>
+          {history && (
+            <Table>
+              <TableCaption>Histórico</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Preço do Produto</TableHead>
+                  <TableHead>Imposto (%)</TableHead>
+                  <TableHead>Imposto</TableHead>
+                  <TableHead>Imposto ICMS (%)</TableHead>
+                  <TableHead>Imposto ICMS</TableHead>
+                  <TableHead>Total de impostos</TableHead>
+                  <TableHead>Valor Final</TableHead>
+                  <TableHead>Preço original - com imposto (%)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="">
+                {history.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8}>Seu histórico esta vazio.</TableCell>
+                  </TableRow>
+                ) : (
+                  history
+                    .map((cell, index) => {
+                      return (
+                        <TableRow key={index}>
+                          <TableCell>{cell.price}</TableCell>
+                          <TableCell>{cell.importTaxPercent}</TableCell>
+                          <TableCell>{cell.importTax}</TableCell>
+                          <TableCell>{cell.importTaxICMSPercent}</TableCell>
+                          <TableCell>{cell.onlyTaxICMS}</TableCell>
+                          <TableCell>{cell.onlyTaxes}</TableCell>
+                          <TableCell>{cell.valueTotal}</TableCell>
+                          <TableCell>{cell.percentage}</TableCell>
+                        </TableRow>
+                      )
+                    })
+                    .slice()
+                    .reverse()
+                )}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </section>
       <section className="mt-5">

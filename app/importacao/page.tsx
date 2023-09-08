@@ -186,7 +186,7 @@ export default function InternacionalImport() {
                     <p>
                       Atualmente o imposto de ICMS é de 17% em cima do produto já com imposto federal.
                     </p>
-                    <p>O Calculo de ICMS é feito por dentro por isso que na prática você paga 20,48%.</p>
+                    <p>O calculo de ICMS é feito por dentro.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

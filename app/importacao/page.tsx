@@ -290,14 +290,14 @@ export default function InternacionalImport() {
               <TableCaption>Histórico</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Preço do Produto</TableHead>
-                  <TableHead>Imposto (%)</TableHead>
-                  <TableHead>Imposto</TableHead>
+                  <TableHead>Imposto Federal (%)</TableHead>
+                  <TableHead>Imposto Federal</TableHead>
                   <TableHead>Imposto ICMS (%)</TableHead>
                   <TableHead>Imposto ICMS</TableHead>
                   <TableHead>Total de impostos</TableHead>
+                  <TableHead>Preço do Produto</TableHead>
                   <TableHead>Valor Final</TableHead>
-                  <TableHead>Preço original - com imposto (%)</TableHead>
+                  <TableHead>Preço original : com imposto (%)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="">
@@ -310,12 +310,12 @@ export default function InternacionalImport() {
                     .map((cell, index) => {
                       return (
                         <TableRow key={index}>
-                          <TableCell>{cell.price}</TableCell>
                           <TableCell>{cell.importTaxPercent}</TableCell>
                           <TableCell>{cell.importTax}</TableCell>
                           <TableCell>{cell.importTaxICMSPercent}</TableCell>
                           <TableCell>{cell.onlyTaxICMS}</TableCell>
                           <TableCell>{cell.onlyTaxes}</TableCell>
+                          <TableCell>{cell.price}</TableCell>
                           <TableCell>{cell.valueTotal}</TableCell>
                           <TableCell>{cell.percentage}</TableCell>
                         </TableRow>

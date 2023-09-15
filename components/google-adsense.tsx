@@ -1,3 +1,7 @@
+"use client"
+
+import Script from "next/script"
+
 declare global {
   interface Window {
     adsbygoogle: any[]
@@ -5,9 +9,6 @@ declare global {
 }
 
 export function GoogleAdSense({ adSlot }: { adSlot: string }) {
-  //   if (typeof window !== 'undefined') {
-  //     ; (window.adsbygoogle = window.adsbygoogle || []).push({})
-  //   }
 
   return (
     <>
@@ -20,9 +21,9 @@ export function GoogleAdSense({ adSlot }: { adSlot: string }) {
         data-full-width-responsive="true"
       ></ins>
       {process.env.NODE_ENV === 'production' && (
-        <script>
+        <Script>
           (adsbygoogle = window.adsbygoogle || []).push({ });
-        </script>
+        </Script>
       )}
     </>
   )

@@ -130,7 +130,7 @@ export default function Investment() {
         </h1>
         <span className="font-light text-sm italic opacity-75">
           Começando com um investimento inicial de R$ 0 e contribuindo
-          mensalmente por 95 meses (oito anos) com R$ 1.000, você receberá uma
+          mensalmente R$ 1.000 por 95 meses (oito anos), você receberá uma
           renda passiva mensal de R$ 1.321,51, com uma taxa de juros de 0,9% ao
           mês.
         </span>

@@ -18,13 +18,14 @@ export function GoogleAdSense({ adSlot }: { adSlot: string }) {
         data-ad-client="ca-pub-5699676851939916" // Substitua pelo seu ID de editor
         data-ad-slot={adSlot}
         data-ad-format="auto"
+        google-adtest="on"
         data-full-width-responsive="true"
       ></ins>
-      {process.env.NODE_ENV === 'production' && (
-        <Script>
-          (adsbygoogle = window.adsbygoogle || []).push({ });
-        </Script>
-      )}
+      {/* {process.env.NODE_ENV === 'production' && ( */}
+      <Script>
+        (adsbygoogle = window.adsbygoogle || []).push({ });
+      </Script>
+      {/* )} */}
     </>
   )
 }

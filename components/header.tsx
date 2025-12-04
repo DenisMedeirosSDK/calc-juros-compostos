@@ -18,6 +18,7 @@ const MENU_LIST: MenuItem[] = [
   { label: 'Home', path: '/' },
   { label: 'Importação', path: '/importacao' },
   { label: 'Investimento', path: '/investimento' },
+  { label: 'Energia Solar', path: '/energia-solar' },
 ]
 
 export function Header() {
